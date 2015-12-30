@@ -100,9 +100,9 @@ sub delete {
                 ? "was successful"
                 : "failed";
 
-            print "delete index '$index' $status\n";
+            print "delete index '$index' $status\n" unless $opts{quiet};
         } elsif (!$self->{run}) {
-            print "skip index '$index'\n";
+            print "skip index '$index'\n" unless $opts{quiet};
         }
     }
 }
@@ -163,6 +163,7 @@ my $delete   = undef;
 my $run      = undef;
 my $help     = undef;
 my $version  = undef;
+my $quiet    = undef;
 
 GetOptions(
     "H|host=s"   => \$host,
@@ -171,6 +172,7 @@ GetOptions(
     "i|index=s"  => \$index,
     "d|delete=s" => \$delete,
     "r|run"      => \$run,
+    "q|quiet"    => \$quiet,
     "h|help"     => \$help
 ) or exit 1;
 
@@ -188,11 +190,13 @@ if ($help) {
     print "-i, --index Base name of index index-YY.MM.DD\n";
     print "    Default: logstash-YY.MM.DD.\n";
     print "-d, --delete <days>\n";
-    print "    Delete all indexes that are older than --delete days.\n";
+    print "    Delete all indices that are older than --delete days.\n";
     print "-r, --run\n";
     print "    This parameter must be set to really delete indices.\n";
     print "    If the parameter is not set then the indices are printed to\n";
     print "    stdout that would be deleted if the parameter --run were set.\n";
+    print "-q. --quiet\n";
+    print "    Suppress 'was successful' delete messages (and 'skip' messages in dry run).\n";
     print "-h, --help\n";
     print "    Print the help.\n";
     print "\n";
@@ -216,6 +220,7 @@ ES::Index->delete(
     auth   => $auth,
     index  => $index,
     delete => $delete,
+    quiet  => $quiet,
     run    => $run
 );
 
